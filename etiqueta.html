@@ -3,65 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generador de Etiquetas</title>
+<title>Generador de Etiquetas Compacta</title>
 
-<!-- Código de barras -->
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
 <style>
     body {
         font-family: Arial, sans-serif;
         background: #eef2f5;
-        padding: 20px;
+        padding: 15px;
         text-align: center;
     }
     .form-box {
         background: white;
-        padding: 20px;
-        width: 330px;
+        padding: 15px;
+        width: 280px;
         margin: 0 auto;
-        border-radius: 12px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        border-radius: 10px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
     }
     input {
         width: 100%;
-        margin-bottom: 12px;
-        padding: 8px;
-        border-radius: 6px;
+        margin-bottom: 10px;
+        padding: 6px;
+        border-radius: 5px;
         border: 1px solid #999;
+        font-size: 0.85rem;
     }
     button {
         width: 100%;
-        padding: 10px;
+        padding: 8px;
         background: #006c67;
         border: none;
         color: white;
-        border-radius: 6px;
-        font-size: 15px;
+        border-radius: 5px;
+        font-size: 14px;
         cursor: pointer;
-        margin-top: 8px;
+        margin-top: 6px;
     }
     .label-area {
-        margin-top: 30px;
-        padding: 20px;
-        width: 360px;
+        margin-top: 20px;
+        padding: 15px;
+        width: 280px;
         background: white;
-        margin: 20px auto;
-        border-radius: 12px;
+        margin: 15px auto;
+        border-radius: 10px;
         border: 1px solid black;
+        font-size: 0.8rem;
     }
     .item {
-        margin-bottom: 18px;
+        margin-bottom: 12px;
     }
     svg {
-        margin-top: 5px;
+        margin-top: 4px;
     }
 </style>
 </head>
 
 <body>
 
-<h2>Generador de Etiquetas</h2>
+<h2>Etiqueta Compacta</h2>
 
 <div class="form-box">
     <label>Orden:</label>
@@ -85,7 +86,7 @@
 
 <div class="label-area" id="etiqueta" style="display:none;">
 
-    <h3>Etiqueta</h3>
+    <h3 style="margin-bottom:10px;">Etiqueta</h3>
 
     <div class="item">
         <strong>ORDEN</strong><br>
@@ -123,7 +124,6 @@ function generarPallet() {
 
 generarPallet();
 
-// Generar todos los códigos de barra
 function generarEtiqueta() {
     const orden = document.getElementById("orden").value;
     const familia = document.getElementById("familia").value;
@@ -136,19 +136,18 @@ function generarEtiqueta() {
         return;
     }
 
-    JsBarcode("#barcode_orden", orden, { format: "CODE128", height: 50, displayValue: true });
-    JsBarcode("#barcode_familia", familia, { format: "CODE128", height: 50, displayValue: true });
-    JsBarcode("#barcode_cantidad", cantidad, { format: "CODE128", height: 50, displayValue: true });
-    JsBarcode("#barcode_numero", num1, { format: "CODE128", height: 50, displayValue: true });
-    JsBarcode("#barcode_pallet", pallet, { format: "CODE128", height: 50, displayValue: true });
+    JsBarcode("#barcode_orden", orden, { format: "CODE128", width:1.5, height:35, displayValue: true, fontSize:10 });
+    JsBarcode("#barcode_familia", familia, { format: "CODE128", width:1.5, height:35, displayValue: true, fontSize:10 });
+    JsBarcode("#barcode_cantidad", cantidad, { format: "CODE128", width:1.5, height:35, displayValue: true, fontSize:10 });
+    JsBarcode("#barcode_numero", num1, { format: "CODE128", width:1.5, height:35, displayValue: true, fontSize:10 });
+    JsBarcode("#barcode_pallet", pallet, { format: "CODE128", width:1.5, height:35, displayValue: true, fontSize:10 });
 
     document.getElementById("etiqueta").style.display = "block";
 }
 
-// Imprimir
 function imprimirEtiqueta() {
     const etiqueta = document.getElementById("etiqueta").innerHTML;
-    const ventana = window.open("", "PRINT", "height=600,width=400");
+    const ventana = window.open("", "PRINT", "height=500,width=350");
     ventana.document.write(`<html><body>${etiqueta}</body></html>`);
     ventana.document.close();
     ventana.focus();
@@ -158,4 +157,3 @@ function imprimirEtiqueta() {
 
 </body>
 </html>
-
