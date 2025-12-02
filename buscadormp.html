@@ -132,7 +132,6 @@
     <table id="resultTable">
       <thead>
         <tr>
-          <th>Fecha y Hora</th>
           <th>Tarjeta Operador</th>
           <th>Contenedores</th>
           <th>Fiscal</th>
@@ -151,7 +150,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td colspan="16" class="mensaje">Cargá un archivo Excel para ver los datos</td></tr>
+        <tr><td colspan="15" class="mensaje">Cargá un archivo Excel para ver los datos</td></tr>
       </tbody>
     </table>
 
@@ -185,7 +184,6 @@ function cargarTabla() {
   datos.forEach(item => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${item["Fecha y  Hora"]}</td>
       <td>${item["Tarjeta de Operador"]}</td>
       <td>${item["Contenedores"]}</td>
       <td>${item["Fiscal"]}</td>
