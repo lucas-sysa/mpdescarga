@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stock por Rack y Box</title>
+
+  <!-- Librería Excel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- Iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #04847c;
+      --bg-light: #f2f3f7;
+      --bg-white: #ffffff;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      margin: 0;
+      background: var(--bg-light);
+      padding-top: 70px;
+    }
+
+    .menu-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 25px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      z-index: 999;
+    }
+
+    .logo {
+      height: 50px;
+    }
+
+    button {
+      padding: 8px 14px;
+      background: #036c67;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .container {
+      background: var(--bg-white);
+      max-width: 1200px;
+      margin: 25px auto;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    input[type="file"] {
+      display: block;
+      margin: 10px auto;
+      padding: 6px;
+    }
+
+    .search-container {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+
+    .search-container input {
+      padding: 6px;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      width: 260px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+    }
+
+    th {
+      background: var(--primary);
+      color: #fff;
+      padding: 5px;
+    }
+
+    td {
+      padding: 5px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tr:nth-child(even) {
+      background: #f7f9fc;
+    }
+
+    .mensaje {
+      text-align: center;
+      padding: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="menu-bar">
+    <img src="logo.png" class="logo">
+    <button onclick="imprimirTabla()"><i class="fa fa-print"></i> Imprimir</button>
+  </div>
+
+  <div class="container">
+    <h1>Consulta de Stock por Rack y Box</h1>
+
+    <input type="file" id="fileInput" accept=".xls,.xlsx">
+
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Buscar..." oninput="buscarEnTabla()">
+    </div>
+
+    <table id="resultTable">
+      <thead>
+        <tr>
+          <th>Fecha y Hora</th>
+          <th>Tarjeta Operador</th>
+          <th>Contenedores</th>
+          <th>Fiscal</th>
+          <th>Materia Prima</th>
+          <th>Orden</th>
+          <th>Pallet N° (Auto)</th>
+          <th>Grupo Familia</th>
+          <th>Cantidad</th>
+          <th>Rack Fiscal</th>
+          <th>Box Fiscal</th>
+          <th>Rack Materia Prima</th>
+          <th>Box Materia Prima</th>
+          <th>Entrada</th>
+          <th>Salida</th>
+          <th>Pallet Salida</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="16" class="mensaje">Cargá un archivo Excel para ver los datos</td></tr>
+      </tbody>
+    </table>
+
+  </div>
+
+<script>
+
+let datos = [];
+
+// Cargar Excel
+document.getElementById("fileInput").addEventListener("change", function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const data = new Uint8Array(event.target.result);
+    const workbook = XLSX.read(data, { type: "array" });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    datos = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+    cargarTabla();
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+// Mostrar tabla
+function cargarTabla() {
+  const tbody = document.querySelector("#resultTable tbody");
+  tbody.innerHTML = "";
+
+  datos.forEach(item => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${item["Fecha y  Hora"]}</td>
+      <td>${item["Tarjeta de Operador"]}</td>
+      <td>${item["Contenedores"]}</td>
+      <td>${item["Fiscal"]}</td>
+      <td>${item["Materia Prima"]}</td>
+      <td>${item["Orden"]}</td>
+      <td>${item["Pallet N° (Auto)"]}</td>
+      <td>${item["Grupo de Familia"]}</td>
+      <td>${item["Cantidad"]}</td>
+      <td>${item["Rack Fiscal"]}</td>
+      <td>${item["Box Fiscal"]}</td>
+      <td>${item["Rack Materia Prima"]}</td>
+      <td>${item["Box Materia Prima"]}</td>
+      <td>${item["Entrada"]}</td>
+      <td>${item["Salida"]}</td>
+      <td>${item["Pallet Salida"]}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Buscador
+function buscarEnTabla() {
+  const filtro = document.getElementById("searchInput").value.toLowerCase();
+  const filas = document.querySelectorAll("#resultTable tbody tr");
+  filas.forEach(fila => {
+    fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? "" : "none";
+  });
+}
+
+// Imprimir
+function imprimirTabla() {
+  const ocultar = document.querySelectorAll(".menu-bar, input, .search-container");
+  ocultar.forEach(e => e.style.display = "none");
+  window.print();
+  ocultar.forEach(e => e.style.display = "");
+}
+
+</script>
+
+</body>
+</html>
+
+

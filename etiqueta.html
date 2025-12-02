@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de Etiquetas</title>
+
+<!-- Código de barras -->
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #eef2f5;
+        padding: 20px;
+        text-align: center;
+    }
+    .form-box {
+        background: white;
+        padding: 20px;
+        width: 330px;
+        margin: 0 auto;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    }
+    input {
+        width: 100%;
+        margin-bottom: 12px;
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #999;
+    }
+    button {
+        width: 100%;
+        padding: 10px;
+        background: #006c67;
+        border: none;
+        color: white;
+        border-radius: 6px;
+        font-size: 15px;
+        cursor: pointer;
+        margin-top: 8px;
+    }
+    .label-area {
+        margin-top: 30px;
+        padding: 20px;
+        width: 360px;
+        background: white;
+        margin: 20px auto;
+        border-radius: 12px;
+        border: 1px solid black;
+    }
+    .item {
+        margin-bottom: 18px;
+    }
+    svg {
+        margin-top: 5px;
+    }
+</style>
+</head>
+
+<body>
+
+<h2>Generador de Etiquetas</h2>
+
+<div class="form-box">
+    <label>Orden:</label>
+    <input type="text" id="orden">
+
+    <label>Grupo de Familia:</label>
+    <input type="text" id="familia">
+
+    <label>Cantidad:</label>
+    <input type="number" id="cantidad">
+
+    <label>N° 1:</label>
+    <input type="text" id="num1" value="1">
+
+    <label>Pallet (Auto):</label>
+    <input type="text" id="pallet" readonly>
+
+    <button onclick="generarEtiqueta()">Generar Etiqueta</button>
+    <button onclick="imprimirEtiqueta()">Imprimir</button>
+</div>
+
+<div class="label-area" id="etiqueta" style="display:none;">
+
+    <h3>Etiqueta</h3>
+
+    <div class="item">
+        <strong>ORDEN</strong><br>
+        <svg id="barcode_orden"></svg>
+    </div>
+
+    <div class="item">
+        <strong>FAMILIA</strong><br>
+        <svg id="barcode_familia"></svg>
+    </div>
+
+    <div class="item">
+        <strong>CANTIDAD</strong><br>
+        <svg id="barcode_cantidad"></svg>
+    </div>
+
+    <div class="item">
+        <strong>NÚMERO</strong><br>
+        <svg id="barcode_numero"></svg>
+    </div>
+
+    <div class="item">
+        <strong>PALLET</strong><br>
+        <svg id="barcode_pallet"></svg>
+    </div>
+
+</div>
+
+<script>
+// Genera ID único para pallet
+function generarPallet() {
+    const id = "P-" + Math.floor(Math.random() * 999999 + 100000);
+    document.getElementById("pallet").value = id;
+}
+
+generarPallet();
+
+// Generar todos los códigos de barra
+function generarEtiqueta() {
+    const orden = document.getElementById("orden").value;
+    const familia = document.getElementById("familia").value;
+    const cantidad = document.getElementById("cantidad").value;
+    const num1 = document.getElementById("num1").value;
+    const pallet = document.getElementById("pallet").value;
+
+    if (!orden || !familia || !cantidad) {
+        alert("Completá todos los campos.");
+        return;
+    }
+
+    JsBarcode("#barcode_orden", orden, { format: "CODE128", height: 50, displayValue: true });
+    JsBarcode("#barcode_familia", familia, { format: "CODE128", height: 50, displayValue: true });
+    JsBarcode("#barcode_cantidad", cantidad, { format: "CODE128", height: 50, displayValue: true });
+    JsBarcode("#barcode_numero", num1, { format: "CODE128", height: 50, displayValue: true });
+    JsBarcode("#barcode_pallet", pallet, { format: "CODE128", height: 50, displayValue: true });
+
+    document.getElementById("etiqueta").style.display = "block";
+}
+
+// Imprimir
+function imprimirEtiqueta() {
+    const etiqueta = document.getElementById("etiqueta").innerHTML;
+    const ventana = window.open("", "PRINT", "height=600,width=400");
+    ventana.document.write(`<html><body>${etiqueta}</body></html>`);
+    ventana.document.close();
+    ventana.focus();
+    ventana.print();
+}
+</script>
+
+</body>
+</html>
+
